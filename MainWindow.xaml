@@ -1,0 +1,47 @@
+﻿<Window x:Class="WPFSoundboard.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFSoundboard"
+        mc:Ignorable="d"
+        Title="Soundboard" Width="Auto" Height="Auto" SizeToContent="WidthAndHeight" ResizeMode="NoResize" Icon="Icon.png">
+
+    <ItemsControl ItemsSource="{Binding SoundItems}">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Border CornerRadius="6" BorderBrush="Gray" BorderThickness="2" HorizontalAlignment="Center" Margin="5">
+                    <Button Width="80" Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" Margin="1">
+                        <Button.Content>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock TextWrapping="Wrap" Text="{Binding Name, Mode=TwoWay, ValidatesOnDataErrors=True}" TextAlignment="Center"/>
+                                <TextBlock TextWrapping="Wrap" Text="{Binding Info}" TextAlignment="Center"/>
+                            </StackPanel>
+                        </Button.Content>
+                        <Button.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" Command="{Binding PlaySoundCommand}"/>
+                            <MouseBinding MouseAction="RightClick" Command="{Binding ChangeDataCommand}"/>
+                        </Button.InputBindings>
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                        <Setter Property="Background" Value="LightGreen" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="False">
+                                        <Setter Property="Background" Value="LightGray" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Border>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <UniformGrid/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+    </ItemsControl>
+</Window>
