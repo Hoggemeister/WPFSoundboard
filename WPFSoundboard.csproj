@@ -137,9 +137,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\2565025.svg" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
