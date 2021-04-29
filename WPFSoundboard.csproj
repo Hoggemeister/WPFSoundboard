@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -137,10 +140,10 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\2565025.svg" />
+    <Resource Include="Icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icon.png" />
+    <Resource Include="Icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
