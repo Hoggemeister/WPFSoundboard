@@ -11,17 +11,22 @@ namespace WPFSoundboard
     {
         private string file;
         private string name;
-        private string info;
+        private string id;
+        private string playinfo;
+        private int playcount;
         private bool repeat;
         private bool isPlaying;
         private DispatcherTimer timer;
         private WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
 
-        public SoundItem(string name, string file, bool repeat)
+        public SoundItem(string id, string name, string file, bool repeat, int playcount)
         {
+            this.id = id;
             this.Name = name;
             this.file = file;
             this.Repeat = repeat;
+            this.Playcount = playcount;
+
             this.IsPlaying = false;
             _playSoundCommand = new DelegateCommand(OnPlaySound);
             _changeDataCommand = new DelegateCommand(OnChangeData);
@@ -33,7 +38,7 @@ namespace WPFSoundboard
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            Info = $"{wplayer.controls.currentPositionString}";
+            Playinfo = $"{wplayer.controls.currentPositionString}";
         }
 
         private void Wplayer_PlayStateChange(int NewState)
@@ -48,7 +53,7 @@ namespace WPFSoundboard
             {
                 timer.Stop();
                 wplayer.controls.stop();
-                Info = "";
+                Playinfo = "";
             }
             else
             {
@@ -58,6 +63,8 @@ namespace WPFSoundboard
                     wplayer.settings.setMode("loop", Repeat);
                     wplayer.controls.play();
                     timer.Start();
+                    Playcount++;
+                    AddUpdateAppSettings($"{id}{Soundboard.CONFIG_PLAYCOUNT}", Playcount.ToString());
                 }
             }
         }
@@ -80,14 +87,19 @@ namespace WPFSoundboard
             }
         }
 
-        public string Info
+        public string ID
         {
-            get { return info; }
+            get { return id; }
+        }
+
+        public string Playinfo
+        {
+            get { return playinfo; }
             set
             {
-                if (value != info)
+                if (value != playinfo)
                 {
-                    info = value;
+                    playinfo = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -105,6 +117,20 @@ namespace WPFSoundboard
                 }
             }
         }
+
+        public int Playcount
+        {
+            get { return playcount; }
+            set
+            {
+                if (value != playcount)
+                {
+                    playcount = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
 
         public bool IsPlaying
         {
@@ -142,8 +168,8 @@ namespace WPFSoundboard
                 Name = inputDialog.newName;
                 Repeat = check;
 
-                //AddUpdateAppSettings($"Name{index}", inputDialog.newName);
-                //AddUpdateAppSettings($"Repeat{index}", check.ToString());
+                AddUpdateAppSettings($"{id}{Soundboard.CONFIG_NAME}", inputDialog.newName);
+                AddUpdateAppSettings($"{id}{Soundboard.CONFIG_REPEAT}", check.ToString());
             }
         }
         static void AddUpdateAppSettings(string key, string value)
