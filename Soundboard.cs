@@ -15,9 +15,19 @@ namespace WPFSoundboard
 
             string[] files = System.IO.Directory.GetFiles(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName), "Sounds"), "*.mp3");
 
-            for (int i = 0; i < files.Length; ++i)
+            foreach (string file in files)
             {
-                itemList.Add(new SoundItem(i, sAll.Get($"Name{i}") ?? System.IO.Path.GetFileNameWithoutExtension(files[i]), files[i], Convert.ToBoolean(sAll.Get($"Repeat{i}"))));
+                string filename = System.IO.Path.GetFileNameWithoutExtension(file);
+                
+                bool repeat = false;
+                //try { repeat = Convert.ToBoolean(sAll.Get($"{filename}_Repeat")); }
+                //catch (Exception) { repeat = false; }
+                
+                string name = filename;
+                //try { name = sAll.Get($"{filename}_Name"); }
+                //catch (Exception) { name = filename; }
+
+                itemList.Add(new SoundItem(name, file, repeat));
             }
         }
     }

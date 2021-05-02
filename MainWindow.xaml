@@ -14,7 +14,7 @@
                     <Button Width="80" Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" Margin="1">
                         <Button.Content>
                             <StackPanel Orientation="Vertical">
-                                <TextBlock TextWrapping="Wrap" Text="{Binding Name, Mode=TwoWay, ValidatesOnDataErrors=True}" TextAlignment="Center"/>
+                                <TextBlock TextWrapping="Wrap" Text="{Binding Name}" TextAlignment="Center"/>
                                 <TextBlock TextWrapping="Wrap" Text="{Binding Info}" TextAlignment="Center"/>
                             </StackPanel>
                         </Button.Content>

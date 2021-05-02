@@ -9,7 +9,6 @@ namespace WPFSoundboard
 {
     public class SoundItem : ViewModelBase
     {
-        private int index;
         private string file;
         private string name;
         private string info;
@@ -18,9 +17,8 @@ namespace WPFSoundboard
         private DispatcherTimer timer;
         private WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
 
-        public SoundItem(int index, string name, string file, bool repeat)
+        public SoundItem(string name, string file, bool repeat)
         {
-            this.index = index;
             this.Name = name;
             this.file = file;
             this.Repeat = repeat;
@@ -144,8 +142,8 @@ namespace WPFSoundboard
                 Name = inputDialog.newName;
                 Repeat = check;
 
-                AddUpdateAppSettings($"Name{index}", inputDialog.newName);
-                AddUpdateAppSettings($"Repeat{index}", check.ToString());
+                //AddUpdateAppSettings($"Name{index}", inputDialog.newName);
+                //AddUpdateAppSettings($"Repeat{index}", check.ToString());
             }
         }
         static void AddUpdateAppSettings(string key, string value)
