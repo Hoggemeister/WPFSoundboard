@@ -16,14 +16,13 @@ using System.Windows.Shapes;
 namespace WPFSoundboard
 {
     /// <summary>
-    /// Interaktionslogik für MainWindow.xaml
+    /// Interaction logic for SoundboardControl.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class SoundboardControl : UserControl
     {
-        public MainWindow()
+        public SoundboardControl()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
         }
     }
 }

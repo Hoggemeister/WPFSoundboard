@@ -64,7 +64,7 @@ namespace WPFSoundboard
                     wplayer.controls.play();
                     timer.Start();
                     Playcount++;
-                    AddUpdateAppSettings($"{id}{Soundboard.CONFIG_PLAYCOUNT}", Playcount.ToString());
+                    AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_PLAYCOUNT}", Playcount.ToString());
                 }
             }
         }
@@ -168,8 +168,8 @@ namespace WPFSoundboard
                 Name = inputDialog.newName;
                 Repeat = check;
 
-                AddUpdateAppSettings($"{id}{Soundboard.CONFIG_NAME}", inputDialog.newName);
-                AddUpdateAppSettings($"{id}{Soundboard.CONFIG_REPEAT}", check.ToString());
+                AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_NAME}", inputDialog.newName);
+                AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_REPEAT}", check.ToString());
             }
         }
         static void AddUpdateAppSettings(string key, string value)
