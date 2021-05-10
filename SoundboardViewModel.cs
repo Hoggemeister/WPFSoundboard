@@ -29,8 +29,8 @@ namespace WPFSoundboard
             set { soundDirectory = value; NotifyPropertyChanged(); }
         }
 
-
         public ObservableCollection<SoundItem> SoundItems { get; set; } = new ObservableCollection<SoundItem>();
+
 
         public SoundboardViewModel(string directory)
         {
@@ -69,6 +69,11 @@ namespace WPFSoundboard
 
             foreach (SoundItem item in tempItems)
                 SoundItems.Add(item);
+        }
+
+        public SoundboardViewModel()
+        {
+            this.SoundDirectoryName = "[NoName]";
         }
     }
 }
