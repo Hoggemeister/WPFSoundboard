@@ -35,7 +35,10 @@ namespace WPFSoundboard
 
             foreach (string dir in subDirs)
             {
-                SoundGroups.Add(new SoundboardViewModel(dir));
+                if (!dir.Split(new char[] { '\\' }).Last().StartsWith("."))
+                {
+                    SoundGroups.Add(new SoundboardViewModel(dir));
+                }
             }
 
             SelectedSoundBoard = SoundGroups.Any() ? SoundGroups.First() : null;
