@@ -27,7 +27,7 @@ namespace WPFSoundboard
 
         public MainViewModel()
         {
-            var soundDir = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName), "Sounds");
+            var soundDir = Path.Combine(Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName), "Sounds");
 
             Directory.CreateDirectory(soundDir);
 
@@ -37,7 +37,21 @@ namespace WPFSoundboard
             {
                 if (!dir.Split(new char[] { '\\' }).Last().StartsWith("."))
                 {
-                    SoundGroups.Add(new SoundboardViewModel(dir));
+                    SoundGroups.Add(new SoundboardViewModel(dir, 0));
+                }
+            }
+
+            if(File.Exists(Path.Combine(Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName), "Random.txt")))
+            {
+                string[] randFolders = File.ReadAllLines(Path.Combine(Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName), "Random.txt"));
+
+                foreach(string folder in randFolders)
+                {
+                    string[] cfgSplit = folder.Split(new char[] { ',' });
+                    if (Directory.Exists(cfgSplit[1]))
+                    {
+                        SoundGroups.Add(new SoundboardViewModel(cfgSplit[1], Convert.ToInt32(cfgSplit[0])));
+                    }
                 }
             }
 

@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using WMPLib;
 
 namespace WPFSoundboard
 {
@@ -13,47 +14,69 @@ namespace WPFSoundboard
         private string name;
         private string id;
         private string playinfo;
+        private string tracklengthFormatted;
         private int playcount;
+        private double playposition;
+        private double tracklength;
+        private Visibility sliderVisible;
         private bool repeat;
         private bool isPlaying;
+        private bool noConfig;
         private DispatcherTimer timer;
-        private WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
+        private WindowsMediaPlayer wplayer = new WindowsMediaPlayer();
 
-        public SoundItem(string id, string name, string file, bool repeat, int playcount)
+        public SoundItem(string id, string name, string file, bool repeat, int playcount, bool noconfig)
         {
             this.id = id;
             this.Name = name;
             this.file = file;
             this.Repeat = repeat;
             this.Playcount = playcount;
+            this.noConfig = noconfig;
+            this.SliderVisible = Visibility.Collapsed;
+            //                                                                                    this.Playposition = 0.0;
+
+            IWMPMedia mediaInformation = wplayer.newMedia(file);
+            this.Tracklength = mediaInformation.duration;
+
+            TimeSpan time = TimeSpan.FromSeconds(this.Tracklength);
+            tracklengthFormatted = time.ToString(@"mm\:ss");
+
+            this.Playinfo = $"00:00 / {tracklengthFormatted}";
 
             this.IsPlaying = false;
             _playSoundCommand = new DelegateCommand(OnPlaySound);
             _changeDataCommand = new DelegateCommand(OnChangeData);
             wplayer.PlayStateChange += Wplayer_PlayStateChange;
+            wplayer.PositionChange += Wplayer_PositionChange;
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
             timer.Tick += Timer_Tick;
         }
 
+        private void Wplayer_PositionChange(double oldPosition, double newPosition)
+        {
+            throw new NotImplementedException();
+        }
+
         private void Timer_Tick(object sender, EventArgs e)
         {
-            Playinfo = $"{wplayer.controls.currentPositionString}";
+            Playinfo = $"{wplayer.controls.currentPositionString} / {tracklengthFormatted}";
         }
 
         private void Wplayer_PlayStateChange(int NewState)
         {
-            IsPlaying = NewState == (int)WMPLib.WMPPlayState.wmppsPlaying;
+            IsPlaying = NewState == (int)WMPPlayState.wmppsPlaying;
             OnPlayStateChanged(new PlayStateChangedEventArgs(IsPlaying, Name));
         }
 
         public void Play()
         {
-            if (wplayer.playState == WMPLib.WMPPlayState.wmppsPlaying)
+            if (wplayer.playState == WMPPlayState.wmppsPlaying)
             {
                 timer.Stop();
                 wplayer.controls.stop();
-                Playinfo = "";
+                this.Playinfo = $"00:00 / {tracklengthFormatted}";
             }
             else
             {
@@ -64,7 +87,10 @@ namespace WPFSoundboard
                     wplayer.controls.play();
                     timer.Start();
                     Playcount++;
-                    AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_PLAYCOUNT}", Playcount.ToString());
+                    if (noConfig == false)
+                    {
+                        AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_PLAYCOUNT}", Playcount.ToString());
+                    }
                 }
             }
         }
@@ -131,7 +157,6 @@ namespace WPFSoundboard
             }
         }
 
-
         public bool IsPlaying
         {
             get { return isPlaying; }
@@ -145,7 +170,44 @@ namespace WPFSoundboard
             }
         }
 
+        public double Playposition
+        {
+            get { return playposition; }
+            private set
+            {
+                if (value != playposition)
+                {
+                    playposition = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
+        public double Tracklength
+        {
+            get { return tracklength; }
+            private set
+            {
+                if (value != tracklength)
+                {
+                    tracklength = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public Visibility SliderVisible
+        {
+            get { return sliderVisible; }
+            private set
+            {
+                if (value != sliderVisible)
+                {
+                    sliderVisible = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public event EventHandler<PlayStateChangedEventArgs> PlayStateChanged;
 
         #region Commands
@@ -160,16 +222,19 @@ namespace WPFSoundboard
         public ICommand ChangeDataCommand => _changeDataCommand;
         public void OnChangeData(object commandParameter)
         {
-            InputDialog inputDialog = new InputDialog(Name, System.IO.Path.GetFileName(FilePath), Repeat);
-            inputDialog.Owner = Application.Current.MainWindow;
-            if (inputDialog.ShowDialog() == true)
+            if (noConfig == false)
             {
-                bool check = inputDialog.chkRepeat.IsChecked ?? false;
-                Name = inputDialog.newName;
-                Repeat = check;
+                InputDialog inputDialog = new InputDialog(Name, System.IO.Path.GetFileName(FilePath), Repeat);
+                inputDialog.Owner = Application.Current.MainWindow;
+                if (inputDialog.ShowDialog() == true)
+                {
+                    bool check = inputDialog.chkRepeat.IsChecked ?? false;
+                    Name = inputDialog.newName;
+                    Repeat = check;
 
-                AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_NAME}", inputDialog.newName);
-                AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_REPEAT}", check.ToString());
+                    AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_NAME}", inputDialog.newName);
+                    AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_REPEAT}", check.ToString());
+                }
             }
         }
         static void AddUpdateAppSettings(string key, string value)

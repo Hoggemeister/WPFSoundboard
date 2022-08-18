@@ -149,10 +149,10 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icon.png" />
+    <Resource Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icon.ico" />
+    <Resource Include="Repeat.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

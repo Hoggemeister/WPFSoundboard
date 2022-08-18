@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:local="clr-namespace:WPFSoundboard"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance {x:Type local:SoundboardViewModel}}">
@@ -16,9 +17,24 @@
                                 <Grid>
                                     <TextBlock Text="{Binding Playcount}" HorizontalAlignment="Right" FontSize="8" VerticalAlignment="Top" Margin="0,5,5,0"/>
                                     <StackPanel Margin="5" Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                        <Slider Minimum="0" Maximum="{Binding Tracklength}" Visibility="{Binding SliderVisible}"></Slider>
                                         <TextBlock TextWrapping="Wrap" Text="{Binding Name}" TextAlignment="Center"/>
                                         <TextBlock TextWrapping="Wrap" Text="{Binding Playinfo}" TextAlignment="Center"/>
                                     </StackPanel>
+                                    <Image Source="Repeat.png" Width="15" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                        <Image.Style>
+                                            <Style TargetType="Image">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Repeat}" Value="true">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Repeat}" Value="false">
+                                                        <Setter Property="Visibility" Value="Hidden"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
                                 </Grid>
                             </Button.Content>
                             <Button.InputBindings>
