@@ -7,6 +7,7 @@
              xmlns:local="clr-namespace:WPFSoundboard"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" d:DataContext="{d:DesignInstance {x:Type local:SoundboardViewModel}}">
+    <!--Test-->
     <Grid>
         <ItemsControl ItemsSource="{Binding SoundItems}">
             <ItemsControl.ItemTemplate>

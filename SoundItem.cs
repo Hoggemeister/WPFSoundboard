@@ -34,7 +34,7 @@ namespace WPFSoundboard
             this.Playcount = playcount;
             this.noConfig = noconfig;
             this.SliderVisible = Visibility.Collapsed;
-            //                                                                                    this.Playposition = 0.0;
+            //this.Playposition = 0.0;
 
             IWMPMedia mediaInformation = wplayer.newMedia(file);
             this.Tracklength = mediaInformation.duration;
