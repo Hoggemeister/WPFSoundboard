@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFSoundboard"
         mc:Ignorable="d"
-        Title="Soundboard" Width="Auto" Height="Auto" SizeToContent="WidthAndHeight" ResizeMode="NoResize" Icon="Icon.ico" d:DataContext="{d:DesignInstance {x:Type local:MainViewModel}}" >
+        Title="Soundboard" Width="1600" Height="1200" SizeToContent="WidthAndHeight" ResizeMode="NoResize" Icon="Icon.ico" d:DataContext="{d:DesignInstance {x:Type local:MainViewModel}}" >
 
     <Grid>
         <TabControl ItemsSource="{Binding SoundGroups}" SelectedItem="{Binding SelectedSoundBoard, Mode=TwoWay}">

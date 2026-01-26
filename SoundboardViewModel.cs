@@ -94,7 +94,9 @@ namespace WPFSoundboard
             finally
             {
                 if (string.IsNullOrEmpty(name))
+                {
                     name = filename;
+                }
             }
 
             int count;

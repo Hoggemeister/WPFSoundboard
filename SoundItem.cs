@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -235,6 +236,10 @@ namespace WPFSoundboard
                     AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_NAME}", inputDialog.newName);
                     AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_REPEAT}", check.ToString());
                 }
+            }
+            else
+            {
+                Process.Start(System.IO.Directory.GetParent(FilePath).FullName);
             }
         }
         static void AddUpdateAppSettings(string key, string value)
