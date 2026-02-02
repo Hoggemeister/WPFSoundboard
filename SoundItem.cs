@@ -28,6 +28,8 @@ namespace WPFSoundboard
         private DispatcherTimer timer;
         private WindowsMediaPlayer wplayer = new WindowsMediaPlayer();
 
+        public event EventHandler NewItemEvent;
+
         public SoundItem(string id, string name, string file, bool repeat, int playcount, ItemType type)
         {
             this.id = id;
@@ -45,7 +47,14 @@ namespace WPFSoundboard
             TimeSpan time = TimeSpan.FromSeconds(this.Tracklength);
             tracklengthFormatted = time.ToString(@"mm\:ss");
 
-            this.Playinfo = $"00:00 / {tracklengthFormatted}";
+            if (id == "Dyn")
+            {
+                this.Playinfo = "--:--";
+            }
+            else
+            {
+                this.Playinfo = $"00:00 / {tracklengthFormatted}";
+            }
 
             this.IsPlaying = false;
             _playSoundCommand = new DelegateCommand(OnPlaySound);
@@ -257,6 +266,7 @@ namespace WPFSoundboard
                     TimeSpan time = TimeSpan.FromSeconds(this.Tracklength);
                     tracklengthFormatted = time.ToString(@"mm\:ss");
                     this.Playinfo = $"00:00 / {tracklengthFormatted}";
+                    NewItemEvent?.Invoke(this, EventArgs.Empty);
                 }
             }
         }

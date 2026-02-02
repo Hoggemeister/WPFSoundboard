@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 
 namespace WPFSoundboard
 {
@@ -105,7 +106,15 @@ namespace WPFSoundboard
         public SoundboardViewModel()
         {
             this.SoundDirectoryName = "Dynamisch";
-            SoundItems.Add(new SoundItem("Dyn", "Dynamisch", "none", false, 0, ItemType.Dynamic));
+            SoundItems.Add(new SoundItem("Dyn", "Right-click to select File...", "none", false, 0, ItemType.Dynamic));
+            SoundItems.First().NewItemEvent += NewItemToAdd;
+        }
+
+        private void NewItemToAdd(object sender, EventArgs e)
+        {
+            SoundItems.First().NewItemEvent -= NewItemToAdd;
+            SoundItems.Insert(0, new SoundItem("Dyn", "Right-click to select File...", "none", false, 0, ItemType.Dynamic));
+            SoundItems.First().NewItemEvent += NewItemToAdd;
         }
     }
 }
