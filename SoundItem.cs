@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -9,6 +10,7 @@ using WMPLib;
 
 namespace WPFSoundboard
 {
+    public enum ItemType { Config, Random, Dynamic }
     public class SoundItem : ViewModelBase
     {
         private string file;
@@ -22,18 +24,18 @@ namespace WPFSoundboard
         private Visibility sliderVisible;
         private bool repeat;
         private bool isPlaying;
-        private bool noConfig;
+        private ItemType Type;
         private DispatcherTimer timer;
         private WindowsMediaPlayer wplayer = new WindowsMediaPlayer();
 
-        public SoundItem(string id, string name, string file, bool repeat, int playcount, bool noconfig)
+        public SoundItem(string id, string name, string file, bool repeat, int playcount, ItemType type)
         {
             this.id = id;
             this.Name = name;
             this.file = file;
             this.Repeat = repeat;
             this.Playcount = playcount;
-            this.noConfig = noconfig;
+            this.Type = type;
             this.SliderVisible = Visibility.Collapsed;
             //this.Playposition = 0.0;
 
@@ -88,7 +90,7 @@ namespace WPFSoundboard
                     wplayer.controls.play();
                     timer.Start();
                     Playcount++;
-                    if (noConfig == false)
+                    if (Type == ItemType.Config)
                     {
                         AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_PLAYCOUNT}", Playcount.ToString());
                     }
@@ -96,7 +98,7 @@ namespace WPFSoundboard
             }
         }
 
-        public string FilePath 
+        public string FilePath
         {
             get { return file; }
         }
@@ -209,6 +211,7 @@ namespace WPFSoundboard
                 }
             }
         }
+
         public event EventHandler<PlayStateChangedEventArgs> PlayStateChanged;
 
         #region Commands
@@ -223,9 +226,9 @@ namespace WPFSoundboard
         public ICommand ChangeDataCommand => _changeDataCommand;
         public void OnChangeData(object commandParameter)
         {
-            if (noConfig == false)
+            if (Type == ItemType.Config)
             {
-                InputDialog inputDialog = new InputDialog(Name, System.IO.Path.GetFileName(FilePath), Repeat);
+                InputDialog inputDialog = new InputDialog(Name, Path.GetFileName(FilePath), Repeat);
                 inputDialog.Owner = Application.Current.MainWindow;
                 if (inputDialog.ShowDialog() == true)
                 {
@@ -237,11 +240,27 @@ namespace WPFSoundboard
                     AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_REPEAT}", check.ToString());
                 }
             }
+            else if (Type == ItemType.Random)
+            {
+                Process.Start(Directory.GetParent(FilePath).FullName);
+            }
             else
             {
-                Process.Start(System.IO.Directory.GetParent(FilePath).FullName);
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "MP3 files (*.mp3)|*.mp3";
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    file = openFileDialog.FileName;
+                    Name = Path.GetFileName(file);
+                    IWMPMedia mediaInformation = wplayer.newMedia(file);
+                    this.Tracklength = mediaInformation.duration;
+                    TimeSpan time = TimeSpan.FromSeconds(this.Tracklength);
+                    tracklengthFormatted = time.ToString(@"mm\:ss");
+                    this.Playinfo = $"00:00 / {tracklengthFormatted}";
+                }
             }
         }
+
         static void AddUpdateAppSettings(string key, string value)
         {
             try
@@ -272,6 +291,7 @@ namespace WPFSoundboard
         }
         #endregion
     }
+
     public class PlayStateChangedEventArgs : EventArgs
     {
         public PlayStateChangedEventArgs(bool playState, string name)

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
 
@@ -31,11 +29,9 @@ namespace WPFSoundboard
 
         public ObservableCollection<SoundItem> SoundItems { get; set; } = new ObservableCollection<SoundItem>();
 
-
         public SoundboardViewModel(string directory, int randomCount)
         {
             this.SoundDirectory = directory;
-          
 
             List<SoundItem> tempItems = new List<SoundItem>();
 
@@ -62,14 +58,14 @@ namespace WPFSoundboard
 
                 foreach (int index in randoms)
                 {
-                    tempItems.Add(getNewSoundItemFromFile(files[index], true));
+                    tempItems.Add(getNewSoundItemFromFile(files[index], ItemType.Random));
                 }
             }
             else
             {
                 foreach (string file in files)
                 {
-                    tempItems.Add(getNewSoundItemFromFile(file, false));
+                    tempItems.Add(getNewSoundItemFromFile(file, ItemType.Config));
                 }
             }
 
@@ -79,7 +75,7 @@ namespace WPFSoundboard
             }
         }
 
-        private SoundItem getNewSoundItemFromFile(string file, bool random)
+        private SoundItem getNewSoundItemFromFile(string file, ItemType type)
         {
             string filename = Path.GetFileNameWithoutExtension(file);
             string id = filename.Replace(' ', '#');
@@ -103,12 +99,13 @@ namespace WPFSoundboard
             try { count = Convert.ToInt32(ConfigurationManager.AppSettings.Get($"{id}{CONFIG_PLAYCOUNT}")); }
             catch (Exception) { count = 0; }
 
-            return new SoundItem(id, name, file, repeat, count, random);
+            return new SoundItem(id, name, file, repeat, count, type);
         }
 
         public SoundboardViewModel()
         {
-            this.SoundDirectoryName = "[NoName]";
+            this.SoundDirectoryName = "Dynamisch";
+            SoundItems.Add(new SoundItem("Dyn", "Dynamisch", "none", false, 0, ItemType.Dynamic));
         }
     }
 }

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WPFSoundboard
 {
@@ -27,10 +24,10 @@ namespace WPFSoundboard
 
         public MainViewModel()
         {
+            SoundGroups.Add(new SoundboardViewModel());
+
             var soundDir = Path.Combine(Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName), "Sounds");
-
             Directory.CreateDirectory(soundDir);
-
             var subDirs = Directory.GetDirectories(soundDir);
 
             foreach (string dir in subDirs)
@@ -56,8 +53,6 @@ namespace WPFSoundboard
             }
 
             SelectedSoundBoard = SoundGroups.Any() ? SoundGroups.First() : null;
-
         }
-
     }
 }
