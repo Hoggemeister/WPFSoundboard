@@ -39,6 +39,7 @@
                             </Button.Content>
                             <Button.InputBindings>
                                 <MouseBinding MouseAction="LeftClick" Command="{Binding PlaySoundCommand}"/>
+                                <MouseBinding MouseAction="MiddleClick" Command="{Binding PauseSoundCommand}"/>
                                 <MouseBinding MouseAction="RightClick" Command="{Binding ChangeDataCommand}"/>
                             </Button.InputBindings>
                             <Button.Style>
@@ -46,6 +47,9 @@
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" Value="True">
                                             <Setter Property="Background" Value="LightGreen" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                            <Setter Property="Background" Value="LightYellow" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding IsPlaying}" Value="False">
                                             <Setter Property="Background" Value="LightGray" />

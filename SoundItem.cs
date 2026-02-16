@@ -24,6 +24,7 @@ namespace WPFSoundboard
         private Visibility sliderVisible;
         private bool repeat;
         private bool isPlaying;
+        private bool isPaused;
         private ItemType Type;
         private DispatcherTimer timer;
         private WindowsMediaPlayer wplayer = new WindowsMediaPlayer();
@@ -58,8 +59,10 @@ namespace WPFSoundboard
             }
 
             this.IsPlaying = false;
+            this.IsPaused = false;
             _playSoundCommand = new DelegateCommand(OnPlaySound);
             _changeDataCommand = new DelegateCommand(OnChangeData);
+            _pauseSoundCommand = new DelegateCommand(OnPauseSound);
             wplayer.PlayStateChange += Wplayer_PlayStateChange;
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
@@ -80,7 +83,8 @@ namespace WPFSoundboard
         private void Wplayer_PlayStateChange(int NewState)
         {
             IsPlaying = NewState == (int)WMPPlayState.wmppsPlaying;
-            SliderVisible = IsPlaying ? Visibility.Visible : Visibility.Collapsed;
+            IsPaused = NewState == (int)WMPPlayState.wmppsPaused;
+            SliderVisible = (IsPlaying || IsPaused) ? Visibility.Visible : Visibility.Collapsed;
             OnPlayStateChanged(new PlayStateChangedEventArgs(IsPlaying, Name));
         }
 
@@ -107,6 +111,20 @@ namespace WPFSoundboard
                         AddUpdateAppSettings($"{id}{SoundboardViewModel.CONFIG_PLAYCOUNT}", Playcount.ToString());
                     }
                 }
+            }
+        }
+
+        public void Pause()
+        {
+            if (wplayer.playState == WMPPlayState.wmppsPlaying)
+            {
+                wplayer.controls.pause();
+                timer.Stop();
+            }
+            else if (wplayer.playState == WMPPlayState.wmppsPaused)
+            {
+                wplayer.controls.play();
+                timer.Start();
             }
         }
 
@@ -180,6 +198,19 @@ namespace WPFSoundboard
                 if (value != isPlaying)
                 {
                     isPlaying = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsPaused
+        {
+            get { return isPaused; }
+            private set
+            {
+                if (value != isPaused)
+                {
+                    isPaused = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -278,6 +309,13 @@ namespace WPFSoundboard
                     NewItemEvent?.Invoke(this, EventArgs.Empty);
                 }
             }
+        }
+
+        private readonly DelegateCommand _pauseSoundCommand;
+        public ICommand PauseSoundCommand => _pauseSoundCommand;
+        private void OnPauseSound(object commandParameter)
+        {
+            Pause();
         }
 
         static void AddUpdateAppSettings(string key, string value)
