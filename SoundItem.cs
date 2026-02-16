@@ -27,6 +27,7 @@ namespace WPFSoundboard
         private ItemType Type;
         private DispatcherTimer timer;
         private WindowsMediaPlayer wplayer = new WindowsMediaPlayer();
+        private bool isUpdatingPosition;
 
         public event EventHandler NewItemEvent;
 
@@ -60,25 +61,26 @@ namespace WPFSoundboard
             _playSoundCommand = new DelegateCommand(OnPlaySound);
             _changeDataCommand = new DelegateCommand(OnChangeData);
             wplayer.PlayStateChange += Wplayer_PlayStateChange;
-            wplayer.PositionChange += Wplayer_PositionChange;
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(500);
             timer.Tick += Timer_Tick;
         }
 
-        private void Wplayer_PositionChange(double oldPosition, double newPosition)
-        {
-            throw new NotImplementedException();
-        }
-
         private void Timer_Tick(object sender, EventArgs e)
         {
+            if (!isUpdatingPosition)
+            {
+                isUpdatingPosition = true;
+                Playposition = wplayer.controls.currentPosition;
+                isUpdatingPosition = false;
+            }
             Playinfo = $"{wplayer.controls.currentPositionString} / {tracklengthFormatted}";
         }
 
         private void Wplayer_PlayStateChange(int NewState)
         {
             IsPlaying = NewState == (int)WMPPlayState.wmppsPlaying;
+            SliderVisible = IsPlaying ? Visibility.Visible : Visibility.Collapsed;
             OnPlayStateChanged(new PlayStateChangedEventArgs(IsPlaying, Name));
         }
 
@@ -89,6 +91,7 @@ namespace WPFSoundboard
                 timer.Stop();
                 wplayer.controls.stop();
                 this.Playinfo = $"00:00 / {tracklengthFormatted}";
+                this.Playposition = 0.0;
             }
             else
             {
@@ -185,12 +188,18 @@ namespace WPFSoundboard
         public double Playposition
         {
             get { return playposition; }
-            private set
+            set
             {
                 if (value != playposition)
                 {
                     playposition = value;
                     NotifyPropertyChanged();
+
+                    // Allow user to seek via slider
+                    if (!isUpdatingPosition && wplayer.playState == WMPPlayState.wmppsPlaying)
+                    {
+                        wplayer.controls.currentPosition = value;
+                    }
                 }
             }
         }

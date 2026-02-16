@@ -17,7 +17,7 @@
                                 <Grid>
                                     <TextBlock Text="{Binding Playcount}" HorizontalAlignment="Right" FontSize="8" VerticalAlignment="Top" Margin="0,5,5,0"/>
                                     <StackPanel Margin="5" Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                                        <Slider Minimum="0" Maximum="{Binding Tracklength}" Visibility="{Binding SliderVisible}"></Slider>
+                                        <Slider Minimum="0" Maximum="{Binding Tracklength}" Value="{Binding Playposition}" Visibility="{Binding SliderVisible}"/>
                                         <TextBlock TextWrapping="Wrap" Text="{Binding Name}" TextAlignment="Center"/>
                                         <TextBlock TextWrapping="Wrap" Text="{Binding Playinfo}" TextAlignment="Center"/>
                                     </StackPanel>
